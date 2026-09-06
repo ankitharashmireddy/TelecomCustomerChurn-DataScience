@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Customer Churn Predictor – Predict Now</title>
+    <meta name="description"
+        content="Fill in the 3-step form to predict whether a telecom customer will churn, using an ensemble ML model.">
+    <meta name="keywords" content="customer churn, churn prediction, machine learning, telecom, AI, XGBoost, LightGBM">
+    <meta name="author" content="Ankitha Rashmi Reddy">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Customer Churn Predictor">
+    <meta property="og:description" content="Predict telecom customer churn using an ensemble ML model.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ url_for('static', filename='Churn.jpg') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='Churn.jpg') }}">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Customer Churn Predictor</h1>
+        <p style="text-align:center; color:#666; font-size:0.85rem; margin-bottom:8px;">
+            Complete all 3 steps to get your prediction…
+        </p>
+
+        <!-- Step indicator dots -->
+        <div class="step-indicator" id="stepIndicator">
+            <div class="step-dot active" id="dot0"></div>
+            <div class="step-dot" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+        </div>
+
+        <!-- Error message if prediction failed -->
+        {% if prediction_error %}
+        <p class="error">{{ prediction_error }}</p>
+        {% endif %}
+
+        <!-- Multi-step form posting to /predict -->
+        <form id="churnForm" method="POST" action="/predict">
+            <div style="display:none;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            </div>
+
+            <!-- ── Step 1: Personal & Account Info ─────────────── -->
+            <div class="step active">
+                <h3>Step 1 — Personal &amp; Account Info</h3>
+
+                <label for="Gender">Gender</label>
+                <select id="Gender" name="Gender">
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                </select>
+
+                <label for="SeniorCitizen">Senior Citizen</label>
+                <select id="SeniorCitizen" name="SeniorCitizen">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="Partner">Partner</label>
+                <select id="Partner" name="Partner">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="Dependents">Dependents</label>
+                <select id="Dependents" name="Dependents">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="Tenure">Tenure (months)</label>
+                <input id="Tenure" type="number" name="Tenure" placeholder="e.g. 24" required min="0" inputmode="numeric">
+
+                <div class="btn-group">
+                    <span></span>
+                    <button type="button" onclick="nextStep()">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- ── Step 2: Services ────────────────────────────── -->
+            <div class="step">
+                <h3>Step 2 — Services</h3>
+
+                <label for="PhoneService">Phone Service</label>
+                <select id="PhoneService" name="PhoneService">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="MultipleLines">Multiple Lines</label>
+                <select id="MultipleLines" name="MultipleLines">
+                    <option value="2">No phone service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="InternetService">Internet Service</label>
+                <select id="InternetService" name="InternetService">
+                    <option value="0">No</option>
+                    <option value="1">DSL</option>
+                    <option value="2">Fiber optic</option>
+                </select>
+
+                <label for="OnlineSecurity">Online Security</label>
+                <select id="OnlineSecurity" name="OnlineSecurity">
+                    <option value="2">No internet service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="OnlineBackup">Online Backup</label>
+                <select id="OnlineBackup" name="OnlineBackup">
+                    <option value="2">No internet service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="DeviceProtection">Device Protection</label>
+                <select id="DeviceProtection" name="DeviceProtection">
+                    <option value="2">No internet service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="TechSupport">Tech Support</label>
+                <select id="TechSupport" name="TechSupport">
+                    <option value="2">No internet service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <div class="btn-group">
+                    <button type="button" onclick="prevStep()">← Previous</button>
+                    <button type="button" onclick="nextStep()">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- ── Step 3: Billing & Payment ──────────────────── -->
+            <div class="step">
+                <h3>Step 3 — Billing &amp; Payment</h3>
+
+                <label for="StreamingTV">Streaming TV</label>
+                <select id="StreamingTV" name="StreamingTV">
+                    <option value="2">No internet service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="StreamingMovies">Streaming Movies</label>
+                <select id="StreamingMovies" name="StreamingMovies">
+                    <option value="2">No internet service</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+
+                <label for="Contract">Contract</label>
+                <select id="Contract" name="Contract">
+                    <option value="0">Month-to-month</option>
+                    <option value="1">One year</option>
+                    <option value="2">Two year</option>
+                </select>
+
+                <label for="PaperlessBilling">Paperless Billing</label>
+                <select id="PaperlessBilling" name="PaperlessBilling">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="PaymentMethod">Payment Method</label>
+                <select id="PaymentMethod" name="PaymentMethod">
+                    <option value="0">Electronic check</option>
+                    <option value="1">Mailed check</option>
+                    <option value="2">Bank transfer</option>
+                    <option value="3">Credit card</option>
+                </select>
+
+                <label for="MonthlyCharges">Monthly Charges ($)</label>
+                <input id="MonthlyCharges" type="number" name="MonthlyCharges" step="0.01" placeholder="e.g. 70.50" required inputmode="decimal">
+
+                <label for="TotalCharges">Total Charges ($)</label>
+                <input id="TotalCharges" type="number" name="TotalCharges" step="0.01" placeholder="e.g. 1550.75" required inputmode="decimal">
+
+                <div class="btn-group">
+                    <button type="button" onclick="prevStep()">← Previous</button>
+                    <button type="submit">Predict Outcome 🔍</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer">
+            Developed by
+            <a href="https://github.com/ankitharashmireddy" target="_blank" rel="noopener" aria-label="Visit Ankitha Rashmi Reddy's GitHub profile">Ankitha Rashmi Reddy</a>
+            &nbsp;|&nbsp;
+            <a href="https://www.linkedin.com/in/ankitha-rashmi-reddy/" target="_blank" rel="noopener" aria-label="Visit Ankitha Rashmi Reddy's LinkedIn profile">LinkedIn</a>
+            &nbsp;|&nbsp;
+            <a href="mailto:ankitharashmireddy@gmail.com" target="_blank" rel="noopener">Email</a>
+            &nbsp;|&nbsp;
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const steps = document.querySelectorAll('.step');
+        const dots = document.querySelectorAll('.step-dot');
+
+        function showStep(index) {
+            steps.forEach((s, i) => s.classList.toggle('active', i === index));
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Initialise
+        showStep(currentStep);
+
+        // Loading state on submit
+        document.getElementById('churnForm').addEventListener('submit', function () {
+            const btn = this.querySelector('button[type="submit"]');
+            btn.classList.add('loading');
+        });
+    </script>
+</body>
+
+</html>
