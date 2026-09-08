@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment secrets
+.env
+.env.*
+*.env
+
+# Local database
+users.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Dataset - not needed at runtime
+IT_customer_churn.csv
+
+# Training artifacts
+catboost_info/
+
+# Logs
+*.log
+logs/
+
+# Project screenshots
+templates/*.png
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+desktop.ini
+Thumbs.db
+.DS_Store

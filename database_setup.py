@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 import os
 
 def setup_db():
-    db_path = 'users.db'
+    db_path = os.path.join(os.path.dirname(__file__), 'data', 'users.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

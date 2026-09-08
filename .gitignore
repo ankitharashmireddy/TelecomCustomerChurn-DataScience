@@ -58,8 +58,8 @@ test_app.py
 users.db
 
 # Trained model (regenerate by running the Jupyter notebook)
-churn_prediction_model.pkl
 *.pkl
+!churn_prediction_model.pkl
 
 # IDE project folders
 ChrunPrediction/
