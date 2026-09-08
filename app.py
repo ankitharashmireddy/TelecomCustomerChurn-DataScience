@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev_key_change_in_production_12345')
 csrf = CSRFProtect(app)
 
-DB_PATH = 'users.db'
+DB_PATH = os.path.join(os.path.dirname(__file__), 'data', 'users.db')
 
 def init_db():
     if not os.path.exists(DB_PATH):
@@ -161,4 +161,4 @@ def logout():
 
 if __name__ == '__main__':
     # Production note: In real deployment, use Gunicorn/Nginx and disable debug
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
