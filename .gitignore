@@ -66,3 +66,6 @@ ChrunPrediction/
 
 # Root-level duplicate icons
 /Churn.ico
+
+# Project screenshots
+templates/*.png
